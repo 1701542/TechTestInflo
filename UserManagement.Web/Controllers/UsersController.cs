@@ -48,4 +48,34 @@ public class UsersController : Controller
         var users = _userService.FilterByActive(false);
         return View("List", BuildModel(users));
     }
+
+    [HttpGet("list/view")]
+    public ViewResult ViewUserDetails(long Id)
+    {
+        var userData = _userService
+            .GetAll()
+            .SingleOrDefault(u => u.Id == Id);
+
+        if(userData == null)
+        {
+            return View("Index");
+        }
+
+        var userItem = new UserListItemViewModel
+        {
+            Id = userData.Id,
+            Forename = userData.Forename,
+            Surname = userData.Surname,
+            Email = userData.Email,
+            IsActive = userData.IsActive,
+            DateOfBirth = userData.DateOfBirth
+        };
+
+        var userViewModel= new UserListViewModel
+        {
+            Items = new List<UserListItemViewModel> { userItem }
+        };
+
+        return View("View", userViewModel);
+    }
 }

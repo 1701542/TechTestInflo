@@ -1,0 +1,36 @@
+﻿@model UserManagement.Web.Models.Users.UserListViewModel
+
+@{
+	var user = Model.Items.First();
+}
+
+<h2>User Details</h2>
+
+<table class="table table-striped">
+	<tr>
+		<th>Id</th>
+		<td>@user.Id</td>
+	</tr>
+	<tr>
+		<th>Forename</th>
+		<td>@user.Forename</td>
+	</tr>
+	<tr>
+		<th>Surname</th>
+		<td>@user.Surname</td>
+	</tr>
+	<tr>
+		<th>Email</th>
+		<td>@user.Email</td>
+	</tr>
+	<tr>
+		<th>Active</th>
+		<td>@(user.IsActive ? "Yes" : "No")</td>
+	</tr>
+	<tr>
+		<th>Date of Birth</th>
+		<td>@user.DateOfBirth.ToShortDateString()</td>
+	</tr>
+</table>
+
+<a class="btn btn-primary" asp-controller="Users" asp-action="List">Back to List</a>
