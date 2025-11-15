@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using UserManagement.Models;
 using UserManagement.Services.Domain.Interfaces;
 using UserManagement.Web.Models.Users;
 
@@ -77,5 +78,33 @@ public class UsersController : Controller
         };
 
         return View("View", userViewModel);
+    }
+
+    [HttpGet("list/create")]
+    public ViewResult Create()
+    {
+        return View("Create", new CreateUserViewModel());
+    }
+
+    [HttpPost("list/create")]
+    public IActionResult Create(CreateUserViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View("Create", model);
+
+        //  Could not determine the end user level of privilege so assumed on creation IsActive is true, and Id should be automatically set.
+        var newUser = new User
+        {
+            Id = _userService.GetAll().Max(u => u.Id) + 1,  //  May break if another user was manually edited to be 9,223,372,036,854,775,807
+            Forename = model.Forename,
+            Surname = model.Surname,
+            Email = model.Email,
+            IsActive = true,
+            DateOfBirth = model.DateOfBirth
+        };
+
+        _userService.Create(newUser);
+
+        return RedirectToAction("List");
     }
 }
