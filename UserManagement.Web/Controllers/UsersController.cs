@@ -97,7 +97,7 @@ public class UsersController : Controller
         //  Could not determine the end user level of privilege so assumed on creation IsActive is true, and Id should be automatically set.
         var newUser = new User
         {
-            Id = _userService.GetAll().Max(u => u.Id) + 1,  //  May break if a user was manually edited to be 9,223,372,036,854,775,807
+            Id = _userService.GetAll().Select(u => u.Id).DefaultIfEmpty(0).Max() + 1,
             Forename = model.Forename,
             Surname = model.Surname,
             Email = model.Email,
