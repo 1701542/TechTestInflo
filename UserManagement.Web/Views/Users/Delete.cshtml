@@ -1,0 +1,40 @@
+﻿@model UserManagement.Web.Models.Users.UserListItemViewModel
+
+<h2>Delete User</h2>
+
+<p style="color: red;">
+	You are about to delete the following user. Are you sure?
+</p>
+
+<table class="table table-bordered">
+	<tr>
+		<th>Id</th>
+		<td>@Model.Id</td>
+	</tr>
+	<tr>
+		<th>Forename</th>
+		<td>@Model.Forename</td>
+	</tr>
+	<tr>
+		<th>Surname</th>
+		<td>@Model.Surname</td>
+	</tr>
+	<tr>
+		<th>Email</th>
+		<td>@Model.Email</td>
+	</tr>
+	<tr>
+		<th>Active</th>
+		<td>@(Model.IsActive ? "Yes" : "No")</td>
+	</tr>
+	<tr>
+		<th>Date of Birth</th>
+		<td>@Model.DateOfBirth.ToShortDateString()</td>
+	</tr>
+</table>
+
+<form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
+	<input type="hidden" asp-for="Id" />
+	<button type="submit" class="btn btn-primary">Confirm Delete</button>
+	<a asp-action="List" class="btn btn-secondary">Cancel</a>
+</form>

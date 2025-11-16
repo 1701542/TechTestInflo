@@ -155,6 +155,42 @@ public class UsersController : Controller
 
         _userService.Update(user);
 
-        return RedirectToAction("list");
+        return RedirectToAction("List");
+    }
+
+    [HttpGet("delete/{id}")]
+    public IActionResult DeleteUser(long id)
+    {
+        var user = _userService.GetAll().SingleOrDefault(u => u.Id == id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var model = new UserListItemViewModel
+        {
+            Id = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return View("Delete", model);
+    }
+
+    [HttpPost("delete/{id}")]
+    public IActionResult DeleteConfirmed(long id)
+    {
+        var user = _userService.GetAll().SingleOrDefault(u => u.Id == id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        _userService.Delete(user);
+
+        return RedirectToAction("List");
     }
 }
