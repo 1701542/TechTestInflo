@@ -51,11 +51,11 @@ public class UsersController : Controller
     }
 
     [HttpGet("list/view")]
-    public ViewResult ViewUserDetails(long Id)
+    public ViewResult ViewUserDetails(long id)
     {
         var userData = _userService
             .GetAll()
-            .SingleOrDefault(u => u.Id == Id);
+            .SingleOrDefault(u => u.Id == id);
 
         if(userData == null)
         {
@@ -90,12 +90,14 @@ public class UsersController : Controller
     public IActionResult Create(CreateUserViewModel model)
     {
         if (!ModelState.IsValid)
+        {
             return View("Create", model);
+        }
 
         //  Could not determine the end user level of privilege so assumed on creation IsActive is true, and Id should be automatically set.
         var newUser = new User
         {
-            Id = _userService.GetAll().Max(u => u.Id) + 1,  //  May break if another user was manually edited to be 9,223,372,036,854,775,807
+            Id = _userService.GetAll().Max(u => u.Id) + 1,  //  May break if a user was manually edited to be 9,223,372,036,854,775,807
             Forename = model.Forename,
             Surname = model.Surname,
             Email = model.Email,
@@ -106,5 +108,53 @@ public class UsersController : Controller
         _userService.Create(newUser);
 
         return RedirectToAction("List");
+    }
+
+    [HttpGet("edit/{id}")]
+    public IActionResult EditUserDetails(long id)
+    {
+        //implement here
+        var user = _userService.GetAll().SingleOrDefault(u => u.Id == id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var model = new UserListItemViewModel
+        {
+            Id = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return View("Edit", model);
+    }
+
+    [HttpPost("edit/{id}")]
+    public IActionResult EditUserDetails(long id, UserListItemViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("Edit", model);
+        }
+
+        var user = _userService.GetAll().SingleOrDefault(u => u.Id == id);
+        if(user == null)
+        {
+            return NotFound();
+        }
+
+        user.Forename = model.Forename!;
+        user.Surname = model.Surname!;
+        user.Email = model.Email!;
+        user.IsActive = model.IsActive;
+        user.DateOfBirth = model.DateOfBirth;
+
+        _userService.Update(user);
+
+        return RedirectToAction("list");
     }
 }

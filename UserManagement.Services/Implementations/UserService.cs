@@ -24,4 +24,5 @@ public class UserService : IUserService
     {
         _dataAccess.Create(user);
     }
+    public void Update(User user) => _dataAccess.Update(user);
 }
